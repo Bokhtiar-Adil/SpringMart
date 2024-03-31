@@ -8,8 +8,10 @@ import dev.mrb.commercial.model.entities.EmployeeEntity;
 import dev.mrb.commercial.model.entities.OfficeEntity;
 import dev.mrb.commercial.repositories.AccountRepository;
 import dev.mrb.commercial.repositories.EmployeeRepository;
+import dev.mrb.commercial.security.AccountRegistrationSecurityConfig;
 import dev.mrb.commercial.services.EmployeeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final AccountRepository accountRepository;
     private final Mapper<EmployeeEntity, EmployeeDto> mapper;
     private final Mapper<OfficeEntity, OfficeDto> officeMapper;
+    private final PasswordEncoder passwordEncoder;
     @Override
     public boolean exists(Long employeeId) {
         return employeeRepository.existsById(employeeId);
@@ -54,15 +57,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto addNewEmployee(EmployeeDto employeeDto) {
         EmployeeEntity employeeEntity = mapToEntityFromDto(employeeDto);
         EmployeeEntity savedEntity = employeeRepository.save(employeeEntity);
-        AccountEntity newAccount = new AccountEntity();
-        newAccount.setEmployee(true);
-        newAccount.setEmployeeDetails(employeeEntity);
-        newAccount.setUsername(employeeDto.getFirstName() + " " + employeeDto.getLastName());
-        newAccount.setPassword(employeeDto.getPassword()); // need to encode
-        newAccount.setEmail(employeeDto.getEmail());
-        newAccount.setEnabled(false); // need to enable
-        newAccount.setRoles(employeeDto.getRoles());
-        accountRepository.save(newAccount);
+//        AccountEntity newAccount = new AccountEntity();
+//        newAccount.setEmployee(true);
+//        newAccount.setEmployeeDetails(employeeEntity);
+//        newAccount.setUsername(employeeDto.getFirstName() + " " + employeeDto.getLastName());
+//        newAccount.setPassword(employeeDto.getPassword()); // need to encode
+//        newAccount.setEmail(employeeDto.getEmail());
+//        newAccount.setEnabled(false); // need to enable
+//        newAccount.setRoles(employeeDto.getRoles());
+//        accountRepository.save(newAccount);
         EmployeeDto savedEmployeeDto = mapToDtoFromEntityWithSelectedInfo(savedEntity.getEmployeeId(),
                 savedEntity.getFirstName(), savedEntity.getLastName(), savedEntity.getEmail(), savedEntity.getContactNo(),
                 officeMapper.mapTo(savedEntity.getOffice()), savedEntity.getDesignation(), null,

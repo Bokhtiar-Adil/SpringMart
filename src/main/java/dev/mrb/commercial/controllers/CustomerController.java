@@ -1,9 +1,14 @@
 package dev.mrb.commercial.controllers;
 
+import dev.mrb.commercial.events.AccountVerificationEvent;
 import dev.mrb.commercial.model.dtos.CustomerDto;
 import dev.mrb.commercial.model.dtos.OrderDto;
+import dev.mrb.commercial.model.entities.AccountEntity;
+import dev.mrb.commercial.services.AccountService;
 import dev.mrb.commercial.services.CustomerService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +21,11 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final AccountService accountService;
+    private final ApplicationEventPublisher publisher;
 
-    @PostMapping(path = "/register")
-    public ResponseEntity<CustomerDto> registerNewCustomer(@RequestBody CustomerDto customerDto) {
+    @PostMapping(path = "/add")
+    public ResponseEntity<CustomerDto> addNewCustomer(@RequestBody CustomerDto customerDto, final HttpServletRequest request) {
         CustomerDto savedCustomer = customerService.createNewCustomer(customerDto);
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
@@ -73,6 +80,10 @@ public class CustomerController {
         List<CustomerDto> customerDtos = customerService.getAllCustomers();
         if (!customerDtos.isEmpty()) return new ResponseEntity<>(customerDtos, HttpStatus.FOUND);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    public String buildApplicationUrl(HttpServletRequest request) {
+        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 
 }

@@ -32,15 +32,15 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDto createNewCustomer(CustomerDto customerDto) {
         CustomerEntity customerEntity = mapper.mapFrom(customerDto);
         CustomerEntity savedEntity = customerRepository.save(customerEntity);
-        AccountEntity newAccount = new AccountEntity();
-        newAccount.setEmployee(false);
-        newAccount.setCustomerId(customerEntity);
-        newAccount.setUsername(customerDto.getUsername());
-        newAccount.setPassword(customerDto.getPassword());
-        newAccount.setEmail(customerDto.getEmail());
-        newAccount.setEnabled(false);
-        newAccount.setRoles("CUSTOMER");
-        accountRepository.save(newAccount);
+//        AccountEntity newAccount = new AccountEntity();
+//        newAccount.setEmployee(false);
+//        newAccount.setCustomerDetails(customerEntity);
+//        newAccount.setUsername(customerDto.getUsername());
+//        newAccount.setPassword(customerDto.getPassword());
+//        newAccount.setEmail(customerDto.getEmail());
+//        newAccount.setEnabled(false);
+//        newAccount.setRoles("CUSTOMER");
+//        accountRepository.save(newAccount);
         return mapper.mapTo(savedEntity);
     }
 

@@ -1,8 +1,13 @@
 package dev.mrb.commercial.controllers;
 
+import dev.mrb.commercial.events.AccountVerificationEvent;
 import dev.mrb.commercial.model.dtos.EmployeeDto;
+import dev.mrb.commercial.model.entities.AccountEntity;
+import dev.mrb.commercial.services.AccountService;
 import dev.mrb.commercial.services.EmployeeService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +20,8 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final AccountService accountService;
+    private final ApplicationEventPublisher publisher;
 
     @GetMapping(path = "/all-employees")
     public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
@@ -22,8 +29,9 @@ public class EmployeeController {
     }
 
     @PostMapping(path = "/add")
-    public ResponseEntity<EmployeeDto> addEmployee(@RequestBody EmployeeDto employeeDto) {
-        return new ResponseEntity<>(employeeService.addNewEmployee(employeeDto), HttpStatus.CREATED);
+    public ResponseEntity<EmployeeDto> addEmployee(@RequestBody EmployeeDto employeeDto, final HttpServletRequest request) {
+        employeeService.addNewEmployee(employeeDto);
+        return new ResponseEntity<>(employeeDto, HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/{id}")
@@ -57,6 +65,9 @@ public class EmployeeController {
         return new ResponseEntity<>("Deleted", HttpStatus.OK);
     }
 
+    public String buildApplicationUrl(HttpServletRequest request) {
+        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+    }
 
 
     // some more
