@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class OfficeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long officeId;
     private String addressLine1;
     private String addressLine2;

@@ -9,10 +9,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class OrderMapperImpl implements Mapper<OrderEntity, OrderDto> {
 
     private final ModelMapper modelMapper;
+
+    public OrderMapperImpl(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public OrderDto mapTo(OrderEntity orderEntity) {

@@ -24,7 +24,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final AccountRepository accountRepository;
-    private final Mapper<EmployeeEntity, EmployeeDto> mapper;
     private final Mapper<OfficeEntity, OfficeDto> officeMapper;
     private final PasswordEncoder passwordEncoder;
     @Override

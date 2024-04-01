@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> {
 
-    @Query("SELECT * FROM EmployeeEntity WHERE firstName = :name OR lastName = :name")
+    @Query("SELECT e FROM EmployeeEntity e WHERE e.firstName = :name OR e.lastName = :name")
     List<EmployeeEntity> findEmployeeByName(String name);
 }

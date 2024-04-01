@@ -20,7 +20,7 @@ import java.util.List;
 public class OrderEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
     private String confirmationCode;
     private LocalDate orderDate;

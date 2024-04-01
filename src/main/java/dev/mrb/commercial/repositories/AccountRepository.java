@@ -15,6 +15,6 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     @Query("DELETE FROM AccountEntity WHERE employeeDetails = :toBeDeletedEmployee")
     void deleteByEmployee(EmployeeEntity toBeDeletedEmployee);
 
-    @Query("SELECT * FROM AccountEntity WHERE email = :email")
+    @Query("SELECT a FROM AccountEntity a WHERE a.email = :email")
     Optional<AccountEntity> findByEmail(String email);
 }

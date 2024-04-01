@@ -18,7 +18,7 @@ import java.util.List;
 public class OrderDetailsEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long entryId;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

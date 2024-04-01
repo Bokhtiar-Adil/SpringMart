@@ -8,10 +8,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class CustomerMapperImpl implements Mapper<CustomerEntity, CustomerDto> {
 
     private final ModelMapper modelMapper;
+
+    public CustomerMapperImpl(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public CustomerDto mapTo(CustomerEntity customerEntity) {
