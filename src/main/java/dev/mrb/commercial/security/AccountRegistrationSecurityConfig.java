@@ -32,6 +32,13 @@ public class AccountRegistrationSecurityConfig {
                     registry.requestMatchers("/register/**").permitAll();
                     registry.requestMatchers("/accounts/**").hasRole("ADMIN");
                     registry.requestMatchers("/employees").hasAnyAuthority("ADMIN","MODERATOR","EMPLOYEE");
+                    registry.requestMatchers("/customers/profile/edit/**").hasRole("CUSTOMER");
+                    registry.requestMatchers("/customers/profile/change-status/**").hasAnyAuthority("ADMIN","MODERATOR");
+                    registry.requestMatchers("/customers/search/**").hasAnyAuthority("ADMIN","MODERATOR");
+                    registry.requestMatchers("/employees/superior/**").hasRole("ADMIN");
+                    registry.requestMatchers("/employees/**").hasAnyAuthority("ADMIN","MODERATOR","EMPLOYEE");
+                    registry.requestMatchers("/orders/all").hasAnyAuthority("ADMIN","MODERATOR");
+                    registry.requestMatchers("/products/res/**").hasAnyAuthority("ADMIN","MODERATOR");
                     registry.anyRequest().hasAnyAuthority("ADMIN","MODERATOR","EMPLOYEE","CUSTOMER");
                 })
                 .formLogin((needToWorkHere) -> {})

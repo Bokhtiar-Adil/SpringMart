@@ -30,28 +30,28 @@ public class CustomerController {
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
 
-    @GetMapping(path = "/{id}/profile")
+    @GetMapping(path = "/profile/{id}")
     public ResponseEntity<CustomerDto> getCustomer(@PathVariable Long id) {
         CustomerDto foundCustomer = customerService.findCustomerById(id);
         if (foundCustomer != null) return new ResponseEntity<>(foundCustomer, HttpStatus.FOUND);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(path = "/{id}/orders")
+    @GetMapping(path = "/orders/{id}")
     public ResponseEntity<List<OrderDto>> getOrdersByCustomerId(@PathVariable Long id) {
         List<OrderDto> foundOrders = customerService.findOrdersByCustomerId(id);
         if (!foundOrders.isEmpty()) return new ResponseEntity<>(foundOrders, HttpStatus.FOUND);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PatchMapping(path = "/{id}/profile/edit")
+    @PatchMapping(path = "/profile/edit/{id}")
     public ResponseEntity<CustomerDto> editCustomerData(@PathVariable Long id,
                                                         @RequestBody CustomerDto customerDto) {
         CustomerDto editedCustomer = customerService.editCustomerDataById(id, customerDto);
         return new ResponseEntity<>(editedCustomer, HttpStatus.ACCEPTED);
     }
 
-    @DeleteMapping(path = "/{id}/profile")
+    @DeleteMapping(path = "/profile/{id}")
     public void deleteCustomerProfile(@PathVariable Long id) {
         customerService.deleteCustomerProfileById(id);
     }
@@ -62,7 +62,7 @@ public class CustomerController {
         return new ResponseEntity<>(status, HttpStatus.OK);
     }
 
-    @PatchMapping(path = "/{id}/profile/change-status")
+    @PatchMapping(path = "/profile/change-status/{id}")
     public ResponseEntity<CustomerDto> updateCustomerStatus(@PathVariable Long id, @RequestBody String status) {
         CustomerDto editedCustomer = customerService.updateCustomerStatusById(id, status);
         return new ResponseEntity<>(editedCustomer, HttpStatus.OK);
@@ -75,11 +75,17 @@ public class CustomerController {
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(path = "/all")
+    @GetMapping(path = "/search/all")
     public ResponseEntity<List<CustomerDto>> getAllCustomers() {
         List<CustomerDto> customerDtos = customerService.getAllCustomers();
         if (!customerDtos.isEmpty()) return new ResponseEntity<>(customerDtos, HttpStatus.FOUND);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping(path = "/delete/{id}")
+    public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+        return new ResponseEntity<>("Deleted", HttpStatus.OK);
     }
 
     public String buildApplicationUrl(HttpServletRequest request) {

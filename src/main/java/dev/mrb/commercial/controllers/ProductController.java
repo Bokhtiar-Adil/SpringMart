@@ -33,19 +33,19 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.FOUND);
     }
 
-    @PostMapping(path = "/add")
+    @PostMapping(path = "/res/add")
     public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto) throws Exception {
         ProductDto savedProduct = productService.addProduct(productDto);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
 
-    @PutMapping(path = "/{id}/edit")
+    @PutMapping(path = "/res/{id}/edit")
     public ResponseEntity<ProductDto> editProduct(@PathVariable Long id, @RequestBody ProductDto productDto) throws SQLException, IOException {
         ProductDto savedProduct = productService.editProduct(id, productDto);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
 
-    @PutMapping(path = "/{id}/delete")
+    @PutMapping(path = "/res/{id}/delete")
     public ResponseEntity<ProductDto> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -23,4 +23,6 @@ public interface CustomerService {
     CustomerDto updateCustomerStatusById(Long id, String status);
 
     List<CustomerDto> getAllCustomers();
+
+    void deleteCustomer(Long id);
 }

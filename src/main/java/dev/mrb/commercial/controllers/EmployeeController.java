@@ -23,7 +23,7 @@ public class EmployeeController {
     private final AccountService accountService;
     private final ApplicationEventPublisher publisher;
 
-    @GetMapping(path = "/all-employees")
+    @GetMapping(path = "/superior/all-employees")
     public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
         return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.FOUND);
     }
@@ -41,7 +41,7 @@ public class EmployeeController {
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(path = "/{name}")
+    @GetMapping(path = "/superior/{name}")
     public ResponseEntity<List<EmployeeDto>> getEmployeesByName(@PathVariable String name) {
         List<EmployeeDto> foundEmployees = employeeService.getEmployeeByName(name);
         if (!foundEmployees.isEmpty()) return new ResponseEntity<>(foundEmployees, HttpStatus.FOUND);
@@ -53,13 +53,13 @@ public class EmployeeController {
         return new ResponseEntity<>(employeeService.updateEmployeeDataByHimself(id, employeeDto), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/{superiorId}/{id}/edit")
+    @PutMapping(path = "/superior/edit/{superiorId}/{id}")
     public ResponseEntity<EmployeeDto> editEmployeeDataBySuperior(@PathVariable Long superiorId, @PathVariable Long id,
                                                                   @RequestBody EmployeeDto employeeDto) {
         return new ResponseEntity<>(employeeService.updateEmployeeDataBySuperior(superiorId, id, employeeDto), HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "/superior/delete/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
         employeeService.deleteEmployee(id);
         return new ResponseEntity<>("Deleted", HttpStatus.OK);
