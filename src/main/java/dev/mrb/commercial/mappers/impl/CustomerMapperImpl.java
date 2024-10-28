@@ -18,13 +18,31 @@ public class CustomerMapperImpl implements Mapper<CustomerEntity, CustomerDto> {
 
     @Override
     public CustomerDto mapTo(CustomerEntity customerEntity) {
-        CustomerDto customerDto = modelMapper.map(customerEntity, CustomerDto.class);
+        CustomerDto customerDto;
+        
+        customerDto = new CustomerDto();
+        customerDto.setCustomerId(customerEntity.getCustomerId());
+        customerDto.setFirstName(customerEntity.getFirstName());
+        customerDto.setLastName(customerEntity.getLastName());
+        customerDto.setPhone(customerEntity.getPhone());
+        customerDto.setEmail(customerEntity.getEmail());
+        customerDto.setAddress(customerEntity.getAddress());
+        customerDto.setUsername(null);
+        
         return customerDto;
     }
 
     @Override
     public CustomerEntity mapFrom(CustomerDto customerDto) {
-        CustomerEntity customerEntity = modelMapper.map(customerDto, CustomerEntity.class);
+        CustomerEntity customerEntity;
+
+        customerEntity = new CustomerEntity();
+        customerEntity.setFirstName(customerDto.getFirstName());
+        customerEntity.setLastName(customerDto.getLastName());
+        customerEntity.setPhone(customerDto.getPhone());
+        customerEntity.setEmail(customerDto.getEmail());
+        customerEntity.setAddress(customerDto.getAddress());
+
         return customerEntity;
     }
 }

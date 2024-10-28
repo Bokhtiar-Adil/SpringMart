@@ -1,28 +1,22 @@
 package dev.mrb.commercial.model.dtos;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class EmployeeDto {
-
-    private Long employeeId;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String contactNo;
-    private OfficeDto office;
-    private String designation;
-    private String roles;
+    private Long employeeId = null;
+    private String firstName = null;
+    private String lastName = null;
+    private String contactNo = null;
+    private String email = null;
+    private Long officeId = null;
+    private String officeAddress = null;
+    private String designation = null;
+    private String roles = null;
     private String specialInfo = null;
-
-    private String username;
-    private String password;
-
+    private String username = null;
 }

@@ -1,5 +1,7 @@
 package dev.mrb.commercial.model.dtos;
 
+import dev.mrb.commercial.model.enums.OrderStatus;
+import dev.mrb.commercial.model.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,14 +21,14 @@ public class OrderDto {
     private Long orderId;
     private String confirmationCode;
     private LocalDate orderDate;
-    private LocalDate deadline;
     private LocalDate deliveryDate;
     private LocalDate shippedDate;
-    private String status;
+    private OrderStatus status;
     private Long totalAmount;
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
     private LocalDate paymentDate;
-    private CustomerDto customer;
+    private Long customerId;
+    private String customerName;
     private String comments = null;
     private List<ProductDto> products;
     private List<Long> quantities;

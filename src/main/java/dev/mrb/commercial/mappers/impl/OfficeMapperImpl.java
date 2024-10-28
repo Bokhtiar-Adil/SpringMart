@@ -10,14 +10,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class OfficeMapperImpl implements Mapper<OfficeEntity, OfficeDto> {
 
-    private final ModelMapper modelMapper;
-
-    public OfficeMapperImpl(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
-
     @Override
     public OfficeDto mapTo(OfficeEntity officeEntity) {
+        OfficeDto officeDto;
+
+        officeDto = new OfficeDto();
+        officeDto.setOfficeId(officeEntity.getOfficeId());
+
         return null;
     }
 

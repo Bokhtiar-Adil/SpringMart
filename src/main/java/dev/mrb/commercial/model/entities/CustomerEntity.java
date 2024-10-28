@@ -19,13 +19,13 @@ public class CustomerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
+
     private String firstName;
     private String lastName;
     private String phone;
-    private String email;
-    private String address;
-    private String status = null;
 
-    private String username;
-    private String password;
+    @Column(unique = true)
+    private String email;
+
+    private String address;
 }

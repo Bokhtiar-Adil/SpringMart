@@ -19,16 +19,22 @@ public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
+
     private String name;
     private String productLineDesc;
 
     private Long stockNum;
     private String producer;
     private String description;
-    private Long inStock;
+
+    @Column(name = "stock_quantity")
+    private Long quantityInStock;
+
     private Long buyPrice;
     private Long productionCost;
     private Long sellPrice;
     private Long mrp;
-    private Blob photo;
+
+    @Column(columnDefinition = "TEXT")  // Store URLs instead
+    private String photoUrl;
 }

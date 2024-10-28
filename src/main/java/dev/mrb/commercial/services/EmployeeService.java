@@ -12,15 +12,15 @@ public interface EmployeeService {
 
     List<EmployeeDto> getAllEmployees();
 
-    EmployeeDto addNewEmployee(EmployeeDto employeeDto);
+    String addNewEmployee(EmployeeDto employeeDto);
 
     EmployeeDto getEmployee(Long id);
 
-    List<EmployeeDto> getEmployeeByName(String name);
+    List<EmployeeDto> getEmployeesByName(String name);
 
-    EmployeeDto updateEmployeeDataByHimself(Long id, EmployeeDto employeeDto);
+    String updateEmployeeDataByHimself(EmployeeDto employeeDto);
 
-    EmployeeDto updateEmployeeDataBySuperior(Long superiorId, Long id, EmployeeDto employeeDto);
+    String updateEmployeeDataBySuperior(Long superiorId, Long id, EmployeeDto employeeDto);
 
-    void deleteEmployee(Long id);
+    String deleteEmployee(Long id);
 }

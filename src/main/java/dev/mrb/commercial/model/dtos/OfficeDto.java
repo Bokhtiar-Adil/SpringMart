@@ -14,7 +14,6 @@ public class OfficeDto {
     private Long officeId;
     private String addressLine1;
     private String addressLine2;
-    private Long address;
-    private Long city;
-    private String country;
+    private String address;
+    private String region;
 }

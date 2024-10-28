@@ -1,5 +1,7 @@
 package dev.mrb.commercial.model.entities;
 
+import dev.mrb.commercial.model.enums.OrderStatus;
+import dev.mrb.commercial.model.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,18 +24,32 @@ public class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
+
     private String confirmationCode;
     private LocalDate orderDate;
-    private LocalDate deadline;
     private LocalDate deliveryDate;
     private LocalDate shippedDate;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
     private Long totalAmount;
-    private String paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
     private LocalDate paymentDate;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private CustomerEntity customer;
-    private String comments = null;
-    private List<String> orderEditHistory = new ArrayList<>();
+
+    @Column(nullable = true)
+    private String comments;
+
+    private List<String> orderEditHistory;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductEntity> orderProducts;
+
+    private List<Long> quantities;
 }

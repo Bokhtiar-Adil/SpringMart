@@ -20,8 +20,6 @@ public class CustomerDto {
     private String phone;
     private String email;
     private String address;
-    private String status = null;
+    private String username = null;
 
-    private String username;
-    private String password;
 }

@@ -1,9 +1,12 @@
 package dev.mrb.commercial.model.dtos;
 
+import dev.mrb.commercial.model.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 
 @Data
@@ -18,7 +21,6 @@ public class AccountDto {
     private CustomerDto customerDetails = null;
     private String username;
     private String email;
-    private String password;
     private boolean isEnabled;
-    private String roles;
+    private Set<Role> roles;
 }

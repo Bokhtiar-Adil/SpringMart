@@ -20,55 +20,118 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-    private final AccountService accountService;
-    private final ApplicationEventPublisher publisher;
 
-    @GetMapping(path = "/superior/all-employees")
+    @GetMapping(path = "/all-employees")
     public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
-        return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.FOUND);
+        return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
     }
 
-    @PostMapping(path = "/add")
-    public ResponseEntity<EmployeeDto> addEmployee(@RequestBody EmployeeDto employeeDto, final HttpServletRequest request) {
-        employeeService.addNewEmployee(employeeDto);
-        return new ResponseEntity<>(employeeDto, HttpStatus.CREATED);
+    @PostMapping(path = "/add-new-employee-details")
+    public ResponseEntity<String> addNewEmployeeDetails(@RequestBody String firstName,
+                                                        @RequestBody String lastName,
+                                                        @RequestBody String email,
+                                                        @RequestBody String contactNo,
+                                                        @RequestBody Long officeId,
+                                                        @RequestBody String designation,
+                                                        @RequestBody String roles,
+                                                        @RequestBody String specialInfo) {
+        EmployeeDto employeeDto = new EmployeeDto(0L, firstName, lastName, email,
+                contactNo, officeId, null, designation, roles, specialInfo, null, null);
+        String status = employeeService.addNewEmployee(employeeDto);
+        if (status == "Saved")
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(status, HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/get-employee/{id}")
     public ResponseEntity<EmployeeDto> getEmployee(@PathVariable Long id) {
-        EmployeeDto foundEmployee = employeeService.getEmployee(id);
-        if (foundEmployee!=null) return new ResponseEntity<>(foundEmployee, HttpStatus.FOUND);
+        EmployeeDto foundEmployee;
+
+        foundEmployee = employeeService.getEmployee(id);
+        if (foundEmployee != null) return new ResponseEntity<>(foundEmployee, HttpStatus.OK);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(path = "/superior/{name}")
+    @GetMapping(path = "/get-employees-by-name/{name}")
     public ResponseEntity<List<EmployeeDto>> getEmployeesByName(@PathVariable String name) {
-        List<EmployeeDto> foundEmployees = employeeService.getEmployeeByName(name);
-        if (!foundEmployees.isEmpty()) return new ResponseEntity<>(foundEmployees, HttpStatus.FOUND);
+        List<EmployeeDto> foundEmployees;
+
+        foundEmployees = employeeService.getEmployeesByName(name);
+        if (!foundEmployees.isEmpty()) return new ResponseEntity<>(foundEmployees, HttpStatus.OK);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping(path = "/{id}/edit")
-    public ResponseEntity<EmployeeDto> editEmployeeDataByHimself(@PathVariable Long id, @RequestBody EmployeeDto employeeDto) {
-        return new ResponseEntity<>(employeeService.updateEmployeeDataByHimself(id, employeeDto), HttpStatus.OK);
+    @PutMapping(path = "/{id}/edit-details")
+    public ResponseEntity<String> editEmployeeDataByHimself(@PathVariable Long id,
+                                                            @RequestBody String firstName,
+                                                            @RequestBody String lastName,
+                                                            @RequestBody String email,
+                                                            @RequestBody String contactNo) {
+        EmployeeDto employeeDto;
+        String status;
+        
+        employeeDto = new EmployeeDto();
+        employeeDto.setEmployeeId(id);
+        employeeDto.setFirstName(firstName);
+        employeeDto.setLastName(lastName);
+        employeeDto.setEmail(email);
+        employeeDto.setContactNo(contactNo);
+
+        status = employeeService.updateEmployeeDataByHimself(employeeDto);
+        if (status.equalsIgnoreCase("ok"))
+            return new ResponseEntity<>("Updated", HttpStatus.OK);
+        else
+            return new ResponseEntity<>(status, HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping(path = "/superior/edit/{superiorId}/{id}")
-    public ResponseEntity<EmployeeDto> editEmployeeDataBySuperior(@PathVariable Long superiorId, @PathVariable Long id,
-                                                                  @RequestBody EmployeeDto employeeDto) {
-        return new ResponseEntity<>(employeeService.updateEmployeeDataBySuperior(superiorId, id, employeeDto), HttpStatus.OK);
+    @PutMapping(path = "/edit-employee-as-superior/{superiorId}/{id}")
+    public ResponseEntity<String> editEmployeeDataBySuperior(@PathVariable Long superiorId,
+                                                             @PathVariable Long id,
+                                                             @RequestBody String firstName,
+                                                             @RequestBody String lastName,
+                                                             @RequestBody String email,
+                                                             @RequestBody String contactNo,
+                                                             @RequestBody Long officeId,
+                                                             @RequestBody String designation,
+                                                             @RequestBody String roles,
+                                                             @RequestBody String specialInfo
+                                                             ) {
+        EmployeeDto employeeDto;
+        String status;
+
+        if (!employeeService.exists(superiorId))
+            return new ResponseEntity<>("Invalid superior id", HttpStatus.BAD_REQUEST);
+
+        employeeDto = new EmployeeDto();
+        employeeDto.setEmployeeId(id);
+        employeeDto.setFirstName(firstName);
+        employeeDto.setLastName(lastName);
+        employeeDto.setEmail(email);
+        employeeDto.setContactNo(contactNo);
+        employeeDto.setOfficeId(officeId);
+        employeeDto.setDesignation(designation);
+        employeeDto.setRoles(roles);
+        employeeDto.setSpecialInfo(specialInfo);
+
+        status = employeeService.updateEmployeeDataByHimself(employeeDto);
+        if (status.equalsIgnoreCase("ok"))
+            return new ResponseEntity<>("Updated", HttpStatus.OK);
+        else
+            return new ResponseEntity<>(status, HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping(path = "/superior/delete/{id}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
-        employeeService.deleteEmployee(id);
-        return new ResponseEntity<>("Deleted", HttpStatus.OK);
+    @DeleteMapping(path = "/delete-employee/{superiorId}/{id}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable Long superiorId, @PathVariable Long id) {
+        String status;
+
+        if (!employeeService.exists(superiorId))
+            return new ResponseEntity<>("Invalid superior id", HttpStatus.BAD_REQUEST);
+
+        status = employeeService.deleteEmployee(id);
+        if (status.equalsIgnoreCase("ok"))
+            return new ResponseEntity<>("Deleted", HttpStatus.OK);
+        else
+            return new ResponseEntity<>(status, HttpStatus.BAD_REQUEST);
     }
-
-    public String buildApplicationUrl(HttpServletRequest request) {
-        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
-    }
-
-
-    // some more
 }

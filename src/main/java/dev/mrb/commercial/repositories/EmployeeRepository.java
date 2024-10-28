@@ -9,5 +9,5 @@ import java.util.List;
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> {
 
     @Query("SELECT e FROM EmployeeEntity e WHERE e.firstName = :name OR e.lastName = :name")
-    List<EmployeeEntity> findEmployeeByName(String name);
+    List<EmployeeEntity> findEmployeesByName(String name);
 }

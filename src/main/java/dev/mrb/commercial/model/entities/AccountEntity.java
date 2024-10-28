@@ -1,5 +1,6 @@
 package dev.mrb.commercial.model.entities;
 
+import dev.mrb.commercial.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -20,14 +22,26 @@ public class AccountEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
+
     private boolean isEmployee;
-    @OneToOne(fetch = FetchType.EAGER)
-    private EmployeeEntity employeeDetails = null;
-    @OneToOne(fetch = FetchType.EAGER)
-    private CustomerEntity customerDetails = null;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private EmployeeEntity employeeDetails;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private CustomerEntity customerDetails;
+
     private String username;
+
+    @Column(unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String password;
+
     private boolean isEnabled;
-    private String roles;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
 }

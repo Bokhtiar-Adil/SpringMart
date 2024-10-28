@@ -14,17 +14,16 @@ import java.sql.Blob;
 @NoArgsConstructor
 @Builder
 public class ProductDto {
-
     private Long productId;
     private String name;
     private String productLineDesc;
     private Long stockNum;
     private String producer;
     private String description;
-    private Long inStock;
+    private Long quantityInStock;
     private Long buyPrice;
     private Long productionCost;
     private Long sellPrice;
     private Long mrp;
-    private MultipartFile photo;
+    private String photoUrl;
 }
