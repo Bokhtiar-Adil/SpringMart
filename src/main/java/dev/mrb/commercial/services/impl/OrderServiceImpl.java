@@ -4,6 +4,7 @@ import dev.mrb.commercial.mappers.Mapper;
 import dev.mrb.commercial.model.dtos.OrderDto;
 import dev.mrb.commercial.model.dtos.ProductDto;
 import dev.mrb.commercial.model.entities.*;
+import dev.mrb.commercial.model.enums.OrderStatus;
 import dev.mrb.commercial.repositories.EmployeeRepository;
 import dev.mrb.commercial.repositories.OrderDetailsRepository;
 import dev.mrb.commercial.repositories.OrderRepository;
@@ -30,24 +31,35 @@ public class OrderServiceImpl implements OrderService {
     private final EmployeeRepository employeeRepository;
     private final Mapper<OrderEntity, OrderDto> mapper;
     private final Mapper<ProductEntity, ProductDto> productMapper;
-    
-    private String confirmationCode = null;
+
     @Override
     public String addOrderAndGetConfirmationCode(OrderDto orderDto) {
+        String confirmationCode;
+        OrderEntity orderEntity;
+
         confirmationCode = "aRandomConfirmationCodeDerivedByAnySuitableAlgorithm";
         orderDto.setConfirmationCode(confirmationCode);
-        OrderEntity orderEntity = new OrderEntity();
-        if (orderDto.getOrderDate() != null) orderEntity.setOrderDate(orderDto.getOrderDate());
-        if (orderDto.getDeadline() != null) orderEntity.setDeadline(orderDto.getDeadline());
-        if (orderDto.getDeliveryDate() != null) orderEntity.setDeliveryDate(orderDto.getDeliveryDate());
-        if (orderDto.getShippedDate() != null) orderEntity.setShippedDate(orderDto.getShippedDate());
-        if (orderDto.getComments() != null) orderEntity.setComments(orderDto.getComments());
-        if (orderDto.getConfirmationCode() != null) orderEntity.setConfirmationCode(orderDto.getConfirmationCode());
-        if (orderDto.getTotalAmount() != null) orderEntity.setTotalAmount(orderDto.getTotalAmount());
-        if (orderDto.getPaymentDate() != null) orderEntity.setPaymentDate(orderDto.getPaymentDate());
-        if (orderDto.getPaymentMethod() != null) orderEntity.setPaymentMethod(orderDto.getPaymentMethod());
-        orderEntity.setStatus("NOT_CONFIRMED");
+
+        orderEntity = new OrderEntity();
+        if (orderDto.getOrderDate() != null)
+            orderEntity.setOrderDate(orderDto.getOrderDate());
+        if (orderDto.getDeliveryDate() != null)
+            orderEntity.setDeliveryDate(orderDto.getDeliveryDate());
+        if (orderDto.getShippedDate() != null)
+            orderEntity.setShippedDate(orderDto.getShippedDate());
+        if (orderDto.getComments() != null)
+            orderEntity.setComments(orderDto.getComments());
+        if (orderDto.getConfirmationCode() != null)
+            orderEntity.setConfirmationCode(orderDto.getConfirmationCode());
+        if (orderDto.getTotalAmount() != null)
+            orderEntity.setTotalAmount(orderDto.getTotalAmount());
+        if (orderDto.getPaymentDate() != null)
+            orderEntity.setPaymentDate(orderDto.getPaymentDate());
+        if (orderDto.getPaymentMethod() != null)
+            orderEntity.setPaymentMethod(orderDto.getPaymentMethod());
+        orderEntity.setStatus(OrderStatus.PENDING);
         OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
+
         return confirmationCode;
     }
 

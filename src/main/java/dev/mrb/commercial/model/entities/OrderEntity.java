@@ -46,10 +46,10 @@ public class OrderEntity {
     @Column(nullable = true)
     private String comments;
 
-    private List<String> orderEditHistory;
-
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProductEntity> orderProducts;
+    private List<ProductEntity> orderProducts = new ArrayList<ProductEntity>();
 
-    private List<Long> quantities;
+    @Builder.Default
+    private List<Long> quantities = new ArrayList<Long>();
 }

@@ -31,6 +31,7 @@ public class OrderDto {
     private String customerName;
     private String comments = null;
     private List<ProductDto> products;
+    private List<Long> productIdsOnly;
     private List<Long> quantities;
     private List<Long> prices;
 }
