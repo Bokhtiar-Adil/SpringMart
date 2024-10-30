@@ -39,6 +39,7 @@ public class OrderEntity {
     private PaymentMethod paymentMethod;
 
     private LocalDate paymentDate;
+    private boolean paymentStatus;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private CustomerEntity customer;

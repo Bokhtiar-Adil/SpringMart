@@ -5,16 +5,15 @@ import dev.mrb.commercial.model.dtos.OrderDto;
 import dev.mrb.commercial.model.dtos.ProductDto;
 import dev.mrb.commercial.model.entities.*;
 import dev.mrb.commercial.model.enums.OrderStatus;
-import dev.mrb.commercial.repositories.EmployeeRepository;
-import dev.mrb.commercial.repositories.OrderDetailsRepository;
-import dev.mrb.commercial.repositories.OrderRepository;
-import dev.mrb.commercial.repositories.VerificationTokenRepository;
+import dev.mrb.commercial.model.enums.PaymentMethod;
+import dev.mrb.commercial.repositories.*;
 import dev.mrb.commercial.services.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,7 +28,9 @@ public class OrderServiceImpl implements OrderService {
     private final OrderDetailsRepository orderDetailsRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final EmployeeRepository employeeRepository;
-    private final Mapper<OrderEntity, OrderDto> mapper;
+    private final CustomerRepository customerRepository;
+    private final ProductRepository productRepository;
+    private final Mapper<OrderEntity, OrderDto> orderMapper;
     private final Mapper<ProductEntity, ProductDto> productMapper;
 
     @Override
@@ -64,60 +65,96 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<OrderDto> confirmNewOrder(String code, OrderDto orderDto) {
-        Optional<OrderEntity> savedOrderEntity = orderRepository.findById(orderDto.getOrderId());
-        if (code != savedOrderEntity.get().getConfirmationCode()) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        savedOrderEntity.get().setStatus("ORDER_PLACED");
-        OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity();
-        orderDetailsEntity.setOrderId(savedOrderEntity.get());
-        List<ProductEntity> orderedProducts = new ArrayList<>();
-        for (ProductDto product : orderDto.getProducts()) {
-            orderedProducts.add(productMapper.mapFrom(product));
-        }
-        orderDetailsEntity.setProducts(orderedProducts);
-        orderDetailsEntity.setPrices(orderDto.getPrices());
-        orderDetailsEntity.setQuantities(orderDto.getQuantities());
-        OrderEntity confirmedOrderEntity = orderRepository.save(savedOrderEntity.get());
-        OrderDetailsEntity confirmedOrderDetailsEntity = orderDetailsRepository.save(orderDetailsEntity);
-        orderDto.setOrderId(confirmedOrderEntity.getOrderId());
-        orderDto.setStatus(confirmedOrderEntity.getStatus());
-        return new ResponseEntity<>(orderDto, HttpStatus.OK);
+    public String confirmNewOrder(String code, Long orderId) {
+        Optional<OrderEntity> savedOrderEntity;
+
+        savedOrderEntity = orderRepository.findById(orderId);
+        if (savedOrderEntity.isEmpty())
+            return "Invalid order id";
+        if (!code.equals(savedOrderEntity.get().getConfirmationCode()))
+            return "Wrong confirmation code";
+
+        savedOrderEntity.get().setStatus(OrderStatus.CONFIRMED);
+        orderRepository.save(savedOrderEntity.get());
+
+        return "ok";
     }
 
     @Override
     public OrderDto findOrderById(Long id) {
-        Optional<OrderEntity> orderEntity = orderRepository.findById(id);
-        if (!orderEntity.isEmpty()) return mapper.mapTo(orderEntity.get());
-        else return null;
+        Optional<OrderEntity> orderEntity;
+
+        orderEntity = orderRepository.findById(id);
+        if (orderEntity.isEmpty())
+            return null;
+
+        return orderMapper.mapTo(orderEntity.get());
     }
 
     @Override
     public void cancelOrder(Long id) {
-        Optional<OrderEntity> orderEntity = orderRepository.findById(id);
-        if (!orderEntity.isEmpty()) orderRepository.deleteById(id);
+        Optional<OrderEntity> orderEntity;
+
+        orderEntity = orderRepository.findById(id);
+        if (!orderEntity.isEmpty())
+            orderRepository.deleteById(id);
+
+        return;
     }
 
     @Override
-    public OrderDto editOrderByCustomers(Long id, Long customerId, OrderDto orderDto) {
-        Optional<OrderEntity> orderEntity = orderRepository.findById(id);
-        Long orderDetailsEntityId = orderDetailsRepository.findByOrderId(id);
-        Optional<OrderDetailsEntity> orderDetailsEntity = orderDetailsRepository.findById(orderDetailsEntityId);
-        if (orderDto.getComments() != null) orderEntity.get().setComments(orderDto.getComments());
-        if (orderDto.getPaymentMethod() != null) orderEntity.get().setPaymentMethod(orderDto.getPaymentMethod());
-        if (orderDto.getTotalAmount() != null) orderEntity.get().setTotalAmount(orderDto.getTotalAmount());
-        List<ProductEntity> orderedProducts = new ArrayList<>();
-        for (ProductDto product : orderDto.getProducts()) {
-            orderedProducts.add(productMapper.mapFrom(product));
-        }
-        if (!orderedProducts.isEmpty()) orderDetailsEntity.get().setProducts(orderedProducts);
-        if (!orderDto.getPrices().isEmpty()) orderDetailsEntity.get().setPrices(orderDto.getPrices());
-        if (!orderDto.getQuantities().isEmpty()) orderDetailsEntity.get().setQuantities(orderDto.getQuantities());
+    public String editOrderByCustomers(Long id, Long customerId, OrderDto orderDto) {
+        Optional<CustomerEntity> customer;
+        Optional<OrderEntity> orderEntity;
+        int i;
+        int len;
+        Long quantity;
+        Long sum;
+        Optional<ProductEntity> product;
+        List<ProductEntity> updatedProducts;
+        List<Long> updatedQuantities;
 
-        String editMessage = "Customer " + customerId.toString() + " edited on " + getCurrentDateTime().toString();
-        orderEntity.get().getOrderEditHistory().add(editMessage);
-        OrderEntity updatedOrder = orderRepository.save(orderEntity.get());
-        orderDto.setOrderId(updatedOrder.getOrderId());
-        return orderDto;
+        customer = customerRepository.findById(customerId);
+        if (customer.isEmpty())
+            return "Invalid customer id";
+
+        orderEntity = orderRepository.findById(orderDto.getOrderId());
+        if (orderEntity.isEmpty())
+            return "Invalid order id";
+
+        orderEntity.get().setOrderProducts(new ArrayList<ProductEntity>());
+        orderEntity.get().setQuantities(new ArrayList<Long>());
+        updatedProducts = new ArrayList<ProductEntity>();
+        updatedQuantities = new ArrayList<Long>();
+        len = orderDto.getProductIdsOnly().size();
+        sum = 0L;
+
+        for (i = 0; i < len; i++)
+        {
+            product = productRepository.findById(orderDto.getProductIdsOnly().get(i));
+            quantity = orderDto.getQuantities().get(i);
+            if (product.isEmpty() || quantity <= 0)
+                continue;
+
+            updatedProducts.add(product.get());
+            updatedQuantities.add(quantity);
+            sum += product.get().getSellPrice();
+        }
+
+        orderEntity.get().setOrderProducts(updatedProducts);
+        orderEntity.get().setQuantities(updatedQuantities);
+        orderEntity.get().setTotalAmount(sum);
+        orderEntity.get().setOrderDate(LocalDate.now());
+        orderEntity.get().setStatus(OrderStatus.IN_PROCESS);
+
+        if (orderDto.getPaymentMethod() != null)
+        {
+            orderEntity.get().setPaymentMethod(orderDto.getPaymentMethod());
+            if (orderDto.getPaymentMethod() == PaymentMethod.CASH_ON_DELIVERY)
+                orderEntity.get().setPaymentStatus(false);
+        }
+
+        // working here
     }
 
     @Override

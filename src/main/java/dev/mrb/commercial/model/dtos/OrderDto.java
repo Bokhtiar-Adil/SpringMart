@@ -26,6 +26,7 @@ public class OrderDto {
     private OrderStatus status;
     private Long totalAmount;
     private PaymentMethod paymentMethod;
+    private boolean isPaid;
     private LocalDate paymentDate;
     private Long customerId;
     private String customerName;

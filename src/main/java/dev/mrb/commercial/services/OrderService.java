@@ -9,7 +9,7 @@ import java.util.List;
 public interface OrderService {
     String addOrderAndGetConfirmationCode(OrderDto orderDto);
 
-    ResponseEntity<OrderDto> confirmNewOrder(String code, OrderDto orderDto);
+    public String confirmNewOrder(String code, Long orderId);
 
     OrderDto findOrderById(Long id);
 
