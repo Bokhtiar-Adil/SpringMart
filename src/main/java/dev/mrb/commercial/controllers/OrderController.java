@@ -40,7 +40,9 @@ public class OrderController {
 
     @GetMapping(path = "/{id}/details")
     public ResponseEntity<OrderDto> getOrderDetails(@PathVariable Long id) {
-        OrderDto orderDto = orderService.findOrderById(id);
+        OrderDto orderDto = null;
+
+        orderDto = orderService.findOrderById(id);
         if (orderDto != null) return new ResponseEntity<>(orderDto, HttpStatus.FOUND);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -52,7 +54,7 @@ public class OrderController {
 
     @PatchMapping(path = "/{id}/{customerId}/edit")
     public ResponseEntity<String> editOrderByCustomers(@PathVariable Long orderId, @PathVariable Long customerId, @RequestBody OrderDto orderDto) {
-        String status;
+        String status = null;
 
         if (!customerService.exists(customerId))
             return new ResponseEntity<>("Invalid customer id", HttpStatus.BAD_REQUEST);
@@ -67,7 +69,7 @@ public class OrderController {
     @PatchMapping(path = "/{id}/{employeeId}/edit")
     public ResponseEntity<String> editOrderByEmployees(@PathVariable Long orderId, @PathVariable Long employeeId,
                                                          @RequestBody OrderDto orderDto) {
-        String status;
+        String status = null;
 
         if (!employeeService.exists(employeeId))
             return new ResponseEntity<>("Invalid employee id", HttpStatus.BAD_REQUEST);
@@ -81,7 +83,7 @@ public class OrderController {
 
     @GetMapping(path = "/all")
     public ResponseEntity<List<OrderDto>> getAllOrders() {
-        List<OrderDto> orderDtos;
+        List<OrderDto> orderDtos = null;
 
         orderDtos = orderService.getAllOrders();
 

@@ -9,6 +9,7 @@ import dev.mrb.commercial.model.enums.PaymentMethod;
 import dev.mrb.commercial.repositories.*;
 import dev.mrb.commercial.services.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.query.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,8 +36,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String addOrderAndGetConfirmationCode(OrderDto orderDto) {
-        String confirmationCode;
-        OrderEntity orderEntity;
+        String confirmationCode = null;
+        OrderEntity orderEntity = null;
 
         confirmationCode = "aRandomConfirmationCodeDerivedByAnySuitableAlgorithm";
         orderDto.setConfirmationCode(confirmationCode);
@@ -66,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String confirmNewOrder(String code, Long orderId) {
-        Optional<OrderEntity> savedOrderEntity;
+        Optional<OrderEntity> savedOrderEntity = null;
 
         savedOrderEntity = orderRepository.findById(orderId);
         if (savedOrderEntity.isEmpty())
@@ -82,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto findOrderById(Long id) {
-        Optional<OrderEntity> orderEntity;
+        Optional<OrderEntity> orderEntity = null;
 
         orderEntity = orderRepository.findById(id);
         if (orderEntity.isEmpty())
@@ -93,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void cancelOrder(Long id) {
-        Optional<OrderEntity> orderEntity;
+        Optional<OrderEntity> orderEntity = null;
 
         orderEntity = orderRepository.findById(id);
         if (!orderEntity.isEmpty())
@@ -104,14 +105,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String editOrder(Long orderId, OrderDto orderDto) {
-        Optional<OrderEntity> orderEntity;
-        int i;
-        int len;
-        Long quantity;
-        Long sum;
-        Optional<ProductEntity> product;
-        List<ProductEntity> updatedProducts;
-        List<Long> updatedQuantities;
+        Optional<OrderEntity> orderEntity = null;
+        int i = 0;
+        int len = 0;
+        Long quantity = null;
+        Long sum = null;
+        Optional<ProductEntity> product = null;
+        List<ProductEntity> updatedProducts = null;
+        List<Long> updatedQuantities = null;
 
         orderEntity = orderRepository.findById(orderId);
         if (orderEntity.isEmpty())
@@ -156,8 +157,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> getAllOrders() {
-        List<OrderEntity> orders;
-        List<OrderDto> orderDtos;
+        List<OrderEntity> orders = null;
+        List<OrderDto> orderDtos = null;
 
         orders = orderRepository.findAll();
         orderDtos = new ArrayList<OrderDto>();
@@ -169,7 +170,45 @@ public class OrderServiceImpl implements OrderService {
         return orderDtos;
     }
 
-    // needs status and dates services
+    @Override
+    public String updateStatus(Long orderId, OrderStatus newStatus) {
+        Optional<OrderEntity> order = null;
+
+        order = orderRepository.findById(orderId);
+        if (order.isEmpty())
+            return "Invalid order id";
+
+        order.get().setStatus(newStatus);
+        orderRepository.save(order.get());
+
+        return "ok";
+    }
+
+    @Override
+    public String updateDates(Long orderId, Long type, LocalDate date)
+    {
+        Optional<OrderEntity> orderEntity = null;
+
+        orderEntity = orderRepository.findById(orderId);
+        if (orderEntity.isEmpty())
+            return "Invalid order id";
+
+        if (type == 1) { // shipped date
+            orderEntity.get().setShippedDate(date);
+        }
+        else if (type == 2) { // delivery date
+            orderEntity.get().setDeliveryDate(date);
+        }
+        else
+            ;
+
+        orderRepository.save(orderEntity.get());
+
+        return "ok";
+    }
+
+    // working here
+    // null initialization, product, controller class
 
     @Override
     public void saveOrderConfirmationToken(OrderEntity order, String token) {
