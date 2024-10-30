@@ -1,10 +1,8 @@
 package dev.mrb.commercial.services.impl;
 
-import dev.mrb.commercial.exceptions.CustomerNotFoundException;
 import dev.mrb.commercial.mappers.Mapper;
 import dev.mrb.commercial.model.dtos.CustomerDto;
 import dev.mrb.commercial.model.dtos.OrderDto;
-import dev.mrb.commercial.model.entities.AccountEntity;
 import dev.mrb.commercial.model.entities.CustomerEntity;
 import dev.mrb.commercial.model.entities.OrderEntity;
 import dev.mrb.commercial.repositories.AccountRepository;
@@ -27,6 +25,11 @@ public class CustomerServiceImpl implements CustomerService {
     private final AccountRepository accountRepository;
     private final Mapper<CustomerEntity, CustomerDto> mapper;
     private final Mapper<OrderEntity, OrderDto> mapperOrder;
+
+    @Override
+    public boolean exists(Long customerId) {
+        return customerRepository.existsById(customerId);
+    }
 
     @Override
     public String createNewCustomer(CustomerDto customerDto) {

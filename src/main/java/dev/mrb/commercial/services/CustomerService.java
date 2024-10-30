@@ -6,6 +6,8 @@ import dev.mrb.commercial.model.dtos.OrderDto;
 import java.util.List;
 
 public interface CustomerService {
+    boolean exists(Long customerId);
+
     String createNewCustomer(CustomerDto customerDto);
 
     CustomerDto findCustomerById(Long id);

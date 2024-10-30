@@ -3,6 +3,7 @@ package dev.mrb.commercial.controllers;
 import dev.mrb.commercial.events.OrderConfirmationEvent;
 import dev.mrb.commercial.model.dtos.OrderDto;
 import dev.mrb.commercial.model.entities.EmployeeEntity;
+import dev.mrb.commercial.services.CustomerService;
 import dev.mrb.commercial.services.EmployeeService;
 import dev.mrb.commercial.services.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ public class OrderController {
 
     private final OrderService orderService;
     private final EmployeeService employeeService;
+    private final CustomerService customerService;
     private final ApplicationEventPublisher publisher;
 
     @PostMapping(path = "/new-order/add")
@@ -49,31 +51,42 @@ public class OrderController {
     }
 
     @PatchMapping(path = "/{id}/{customerId}/edit")
-    public ResponseEntity<OrderDto> editOrderByCustomers(@PathVariable Long id, @PathVariable Long customerId,
-                                                         @RequestBody OrderDto orderDto) {
-        OrderDto editedOrderDto = orderService.editOrderByCustomers(id, customerId, orderDto);
-        return new ResponseEntity<>(editedOrderDto, HttpStatus.ACCEPTED);
+    public ResponseEntity<String> editOrderByCustomers(@PathVariable Long orderId, @PathVariable Long customerId, @RequestBody OrderDto orderDto) {
+        String status;
+
+        if (!customerService.exists(customerId))
+            return new ResponseEntity<>("Invalid customer id", HttpStatus.BAD_REQUEST);
+
+        status = orderService.editOrder(orderId, orderDto);
+        if (!status.equalsIgnoreCase("ok"))
+            return new ResponseEntity<>(status, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(status, HttpStatus.OK);
     }
 
     @PatchMapping(path = "/{id}/{employeeId}/edit")
-    public ResponseEntity<OrderDto> editOrderByEmployees(@PathVariable Long id, @PathVariable Long employeeId,
+    public ResponseEntity<String> editOrderByEmployees(@PathVariable Long orderId, @PathVariable Long employeeId,
                                                          @RequestBody OrderDto orderDto) {
-        boolean employeeValidity = employeeService.exists(employeeId);
-        if (employeeValidity == false) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        employeeValidity = employeeService.checkOrderEditPermission(employeeId);
-        if (employeeValidity == false) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        OrderDto editedOrderDto = orderService.editOrderByEmployees(id, employeeId, orderDto);
-        if (editedOrderDto == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(editedOrderDto, HttpStatus.ACCEPTED);
+        String status;
+
+        if (!employeeService.exists(employeeId))
+            return new ResponseEntity<>("Invalid employee id", HttpStatus.BAD_REQUEST);
+
+        status = orderService.editOrder(orderId, orderDto);
+        if (!status.equalsIgnoreCase("ok"))
+            return new ResponseEntity<>(status, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(status, HttpStatus.OK);
     }
 
     @GetMapping(path = "/all")
     public ResponseEntity<List<OrderDto>> getAllOrders() {
-        List<OrderDto> orderDtos = orderService.getAllOrders();
-        if (!orderDtos.isEmpty()) return new ResponseEntity<>(orderDtos, HttpStatus.FOUND);
-        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+        List<OrderDto> orderDtos;
 
+        orderDtos = orderService.getAllOrders();
+
+        return new ResponseEntity<>(orderDtos, HttpStatus.OK);
+    }
 
     public String buildApplicationUrl(HttpServletRequest request) {
         return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();

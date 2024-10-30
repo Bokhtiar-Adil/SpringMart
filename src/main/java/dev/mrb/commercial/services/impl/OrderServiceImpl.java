@@ -59,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
         if (orderDto.getPaymentMethod() != null)
             orderEntity.setPaymentMethod(orderDto.getPaymentMethod());
         orderEntity.setStatus(OrderStatus.PENDING);
-        OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
+        orderRepository.save(orderEntity);
 
         return confirmationCode;
     }
@@ -103,8 +103,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String editOrderByCustomers(Long id, Long customerId, OrderDto orderDto) {
-        Optional<CustomerEntity> customer;
+    public String editOrder(Long orderId, OrderDto orderDto) {
         Optional<OrderEntity> orderEntity;
         int i;
         int len;
@@ -114,11 +113,7 @@ public class OrderServiceImpl implements OrderService {
         List<ProductEntity> updatedProducts;
         List<Long> updatedQuantities;
 
-        customer = customerRepository.findById(customerId);
-        if (customer.isEmpty())
-            return "Invalid customer id";
-
-        orderEntity = orderRepository.findById(orderDto.getOrderId());
+        orderEntity = orderRepository.findById(orderId);
         if (orderEntity.isEmpty())
             return "Invalid order id";
 
@@ -154,52 +149,27 @@ public class OrderServiceImpl implements OrderService {
                 orderEntity.get().setPaymentStatus(false);
         }
 
-        // working here
-    }
+        orderRepository.save(orderEntity.get());
 
-    @Override
-    public OrderDto editOrderByEmployees(Long id, Long employeeId, OrderDto orderDto) {
-        Optional<OrderEntity> orderEntity = orderRepository.findById(id);
-        Long orderDetailsEntityId = orderDetailsRepository.findByOrderId(id);
-        Optional<OrderDetailsEntity> orderDetailsEntity = orderDetailsRepository.findById(orderDetailsEntityId);
-        if (orderDto.getDeadline() != null) orderEntity.get().setDeadline(orderDto.getDeadline());
-        if (orderDto.getDeliveryDate() != null) orderEntity.get().setDeliveryDate(orderDto.getDeliveryDate());
-        if (orderDto.getShippedDate() != null) orderEntity.get().setShippedDate(orderDto.getShippedDate());
-        if (orderDto.getStatus() != null) orderEntity.get().setStatus(orderDto.getStatus());
-        if (orderDto.getComments() != null) orderEntity.get().setComments(orderDto.getComments());
-        if (orderDto.getPaymentDate() != null) orderEntity.get().setPaymentDate(orderDto.getPaymentDate());
-        if (orderDto.getPaymentMethod() != null) orderEntity.get().setPaymentMethod(orderDto.getPaymentMethod());
-        if (orderDto.getTotalAmount() != null) orderEntity.get().setTotalAmount(orderDto.getTotalAmount());
-        List<ProductEntity> orderedProducts = new ArrayList<>();
-        for (ProductDto product : orderDto.getProducts()) {
-            orderedProducts.add(productMapper.mapFrom(product));
-        }
-        if (!orderedProducts.isEmpty()) orderDetailsEntity.get().setProducts(orderedProducts);
-        if (!orderDto.getPrices().isEmpty()) orderDetailsEntity.get().setPrices(orderDto.getPrices());
-        if (!orderDto.getQuantities().isEmpty()) orderDetailsEntity.get().setQuantities(orderDto.getQuantities());
-
-        String editMessage = "Employee " + employeeId.toString() + " edited on " + getCurrentDateTime().toString();
-        orderEntity.get().getOrderEditHistory().add(editMessage);
-        OrderEntity updatedOrder = orderRepository.save(orderEntity.get());
-        orderDto.setOrderId(updatedOrder.getOrderId());
-        return orderDto;
+        return "ok";
     }
 
     @Override
     public List<OrderDto> getAllOrders() {
-        List<OrderEntity> orders = orderRepository.findAll();
-        List<OrderDto> orderDtos = new ArrayList<>();
+        List<OrderEntity> orders;
+        List<OrderDto> orderDtos;
+
+        orders = orderRepository.findAll();
+        orderDtos = new ArrayList<OrderDto>();
+
         for (OrderEntity order : orders) {
-            orderDtos.add(mapper.mapTo(order));
+            orderDtos.add(orderMapper.mapTo(order));
         }
+
         return orderDtos;
     }
 
-    private LocalDateTime getCurrentDateTime() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        return now;
-    }
+    // needs status and dates services
 
     @Override
     public void saveOrderConfirmationToken(OrderEntity order, String token) {

@@ -15,9 +15,7 @@ public interface OrderService {
 
     void cancelOrder(Long id);
 
-    OrderDto editOrderByCustomers(Long id, Long customerId, OrderDto orderDto);
-
-    OrderDto editOrderByEmployees(Long id, Long employeeId, OrderDto orderDto);
+    String editOrder(Long orderId, OrderDto orderDto);
 
     List<OrderDto> getAllOrders();
 
