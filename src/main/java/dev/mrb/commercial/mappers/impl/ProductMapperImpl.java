@@ -17,13 +17,19 @@ public class ProductMapperImpl implements Mapper<ProductEntity, ProductDto> {
 
     @Override
     public ProductDto mapTo(ProductEntity productEntity) {
-        ProductDto productDto = modelMapper.map(productEntity, ProductDto.class);
+        ProductDto productDto;
+
+        productDto = modelMapper.map(productEntity, ProductDto.class);
+
         return productDto;
     }
 
     @Override
     public ProductEntity mapFrom(ProductDto productDto) {
-        ProductEntity productEntity = modelMapper.map(productDto, ProductEntity.class);
+        ProductEntity productEntity;
+
+        productEntity = modelMapper.map(productDto, ProductEntity.class);
+
         return productEntity;
     }
 }

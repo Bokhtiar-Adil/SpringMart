@@ -76,16 +76,20 @@ public class CustomerController {
 
     @GetMapping(path = "/search/{name}")
     public ResponseEntity<List<Long>> getPossibleCustomerIdsByName(@PathVariable String name) {
-        List<Long> ids = customerService.findCustomerIdsByName(name);
-        if (!ids.isEmpty()) return new ResponseEntity<>(ids, HttpStatus.FOUND);
-        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        List<Long> ids;
+
+        ids = customerService.findCustomerIdsByName(name);
+
+        return new ResponseEntity<>(ids, HttpStatus.OK);
     }
 
     @GetMapping(path = "/search/all")
     public ResponseEntity<List<CustomerDto>> getAllCustomers() {
-        List<CustomerDto> customerDtos = customerService.getAllCustomers();
-        if (!customerDtos.isEmpty()) return new ResponseEntity<>(customerDtos, HttpStatus.FOUND);
-        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        List<CustomerDto> customerDtos;
+
+        customerDtos = customerService.getAllCustomers();
+
+        return new ResponseEntity<>(customerDtos, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/delete/{id}")

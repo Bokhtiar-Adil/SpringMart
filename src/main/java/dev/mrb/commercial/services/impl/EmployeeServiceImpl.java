@@ -138,7 +138,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Optional<EmployeeEntity> toBeDeletedEmployee;
 
         toBeDeletedEmployee = employeeRepository.findById(id);
-        if (toBeDeletedEmployee == null)
+        if (toBeDeletedEmployee.isEmpty())
             return "Invalid id";
 
         accountRepository.deleteByEmployee(toBeDeletedEmployee.get());
@@ -149,7 +149,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private List<EmployeeDto> getListOfDtosFromEntities(List<EmployeeEntity> employees)
     {
-        List<EmployeeDto> employeeDtos = new ArrayList<>();
+        List<EmployeeDto> employeeDtos;
+
+        employeeDtos = new ArrayList<>();
 
         for (EmployeeEntity employee : employees) {
             EmployeeDto employeeDto = employeeMapper.mapTo(employee);

@@ -22,21 +22,33 @@ public class ProductController {
 
     @GetMapping(path = "/all-products")
     public Page<ProductDto> getAllProducts(Pageable pageable) {
-        Page<ProductDto> products = productService.getAllProducts(pageable);
+        Page<ProductDto> products;
+
+        products = productService.getAllProducts(pageable);
+
         return products;
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<ProductDto> getProduct(@PathVariable Long id) {
-        ProductDto product = productService.getProduct(id);
-        if (product==null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(product, HttpStatus.FOUND);
+        ProductDto product;
+
+        product = productService.getProduct(id);
+        if (product == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @PostMapping(path = "/res/add")
-    public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto) throws Exception {
-        ProductDto savedProduct = productService.addProduct(productDto);
-        return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+    public ResponseEntity<String> addProduct(@RequestBody ProductDto productDto) throws Exception {
+        String status;
+
+        status = productService.addProduct(productDto);
+        if (!status.equalsIgnoreCase("ok"))
+            return new ResponseEntity<>(status, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(status, HttpStatus.CREATED);
     }
 
     @PutMapping(path = "/res/{id}/edit")

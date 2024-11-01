@@ -13,9 +13,9 @@ public interface ProductService {
 
     ProductDto getProduct(Long id);
 
-    ProductDto addProduct(ProductDto productDto) throws SQLException, Exception;
+    String addProduct(ProductDto productDto) throws SQLException, Exception;
 
-    ProductDto editProduct(Long id, ProductDto productDto) throws SQLException, IOException;
+    String editProduct(Long id, ProductDto productDto) throws SQLException, IOException;
 
     void deleteProduct(Long id);
 }

@@ -36,8 +36,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String addOrderAndGetConfirmationCode(OrderDto orderDto) {
-        String confirmationCode = null;
-        OrderEntity orderEntity = null;
+        String confirmationCode;
+        OrderEntity orderEntity;
 
         confirmationCode = "aRandomConfirmationCodeDerivedByAnySuitableAlgorithm";
         orderDto.setConfirmationCode(confirmationCode);
@@ -67,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String confirmNewOrder(String code, Long orderId) {
-        Optional<OrderEntity> savedOrderEntity = null;
+        Optional<OrderEntity> savedOrderEntity;
 
         savedOrderEntity = orderRepository.findById(orderId);
         if (savedOrderEntity.isEmpty())
@@ -83,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto findOrderById(Long id) {
-        Optional<OrderEntity> orderEntity = null;
+        Optional<OrderEntity> orderEntity;
 
         orderEntity = orderRepository.findById(id);
         if (orderEntity.isEmpty())
@@ -94,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void cancelOrder(Long id) {
-        Optional<OrderEntity> orderEntity = null;
+        Optional<OrderEntity> orderEntity;
 
         orderEntity = orderRepository.findById(id);
         if (!orderEntity.isEmpty())
@@ -105,14 +105,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String editOrder(Long orderId, OrderDto orderDto) {
-        Optional<OrderEntity> orderEntity = null;
+        Optional<OrderEntity> orderEntity;
         int i = 0;
         int len = 0;
-        Long quantity = null;
-        Long sum = null;
-        Optional<ProductEntity> product = null;
-        List<ProductEntity> updatedProducts = null;
-        List<Long> updatedQuantities = null;
+        Long quantity;
+        Long sum;
+        Optional<ProductEntity> product;
+        List<ProductEntity> updatedProducts;
+        List<Long> updatedQuantities;
 
         orderEntity = orderRepository.findById(orderId);
         if (orderEntity.isEmpty())
@@ -157,8 +157,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> getAllOrders() {
-        List<OrderEntity> orders = null;
-        List<OrderDto> orderDtos = null;
+        List<OrderEntity> orders;
+        List<OrderDto> orderDtos;
 
         orders = orderRepository.findAll();
         orderDtos = new ArrayList<OrderDto>();
@@ -172,7 +172,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String updateStatus(Long orderId, OrderStatus newStatus) {
-        Optional<OrderEntity> order = null;
+        Optional<OrderEntity> order;
 
         order = orderRepository.findById(orderId);
         if (order.isEmpty())
@@ -187,7 +187,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public String updateDates(Long orderId, Long type, LocalDate date)
     {
-        Optional<OrderEntity> orderEntity = null;
+        Optional<OrderEntity> orderEntity;
 
         orderEntity = orderRepository.findById(orderId);
         if (orderEntity.isEmpty())
@@ -206,9 +206,6 @@ public class OrderServiceImpl implements OrderService {
 
         return "ok";
     }
-
-    // working here
-    // null initialization, product, controller class
 
     @Override
     public void saveOrderConfirmationToken(OrderEntity order, String token) {

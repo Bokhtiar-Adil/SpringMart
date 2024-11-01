@@ -35,13 +35,26 @@ public class EmployeeController {
                                                         @RequestBody String designation,
                                                         @RequestBody String roles,
                                                         @RequestBody String specialInfo) {
-        EmployeeDto employeeDto = new EmployeeDto(0L, firstName, lastName, email,
-                contactNo, officeId, null, designation, roles, specialInfo, null, null);
-        String status = employeeService.addNewEmployee(employeeDto);
-        if (status == "Saved")
-            return new ResponseEntity<>(status, HttpStatus.OK);
-        else
+        EmployeeDto employeeDto;
+        String status;
+
+        employeeDto = new EmployeeDto(
+                0L,
+                firstName,
+                lastName,
+                contactNo,
+                email,
+                officeId,
+                null,
+                designation,
+                roles,
+                specialInfo,
+                null);
+        status = employeeService.addNewEmployee(employeeDto);
+        if (!status.equalsIgnoreCase("ok"))
             return new ResponseEntity<>(status, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(status, HttpStatus.OK);
     }
 
     @GetMapping(path = "/get-employee/{id}")

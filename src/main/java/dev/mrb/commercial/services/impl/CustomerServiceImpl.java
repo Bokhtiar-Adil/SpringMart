@@ -33,8 +33,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public String createNewCustomer(CustomerDto customerDto) {
-        CustomerEntity customerEntity = mapper.mapFrom(customerDto);
+        CustomerEntity customerEntity;
 
+        customerEntity = mapper.mapFrom(customerDto);
         CustomerEntity savedEntity = customerRepository.save(customerEntity);
         if (savedEntity == null)
             return "Failed to save";
@@ -111,7 +112,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<Long> findCustomerIdsByName(String name) {
-        List<Long> possibleCustomerIds = customerRepository.findIdByName(name);
+        List<Long> possibleCustomerIds;
+
+        possibleCustomerIds = customerRepository.findIdByName(name);
+
         return possibleCustomerIds;
     }
 

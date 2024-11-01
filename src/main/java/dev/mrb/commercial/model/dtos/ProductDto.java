@@ -21,8 +21,8 @@ public class ProductDto {
     private String producer;
     private String description;
     private Long quantityInStock;
-    private Long buyPrice;
     private Long productionCost;
+    private Long buyPrice;
     private Long sellPrice;
     private Long mrp;
     private String photoUrl;

@@ -25,10 +25,10 @@ public class OrderMapperImpl implements Mapper<OrderEntity, OrderDto> {
     private final ProductRepository productRepository;
     @Override
     public OrderDto mapTo(OrderEntity orderEntity) {
-        OrderDto orderDto;
-        ProductDto productDto;
-        List<Long> prices;
-        List<ProductDto> productDtos;
+        OrderDto orderDto = null;
+        ProductDto productDto = null;
+        List<Long> prices = null;
+        List<ProductDto> productDtos = null;
 
         orderDto = new OrderDto();
         orderDto.setOrderId(orderEntity.getOrderId());
@@ -61,7 +61,7 @@ public class OrderMapperImpl implements Mapper<OrderEntity, OrderDto> {
 
     @Override
     public OrderEntity mapFrom(OrderDto orderDto) {
-        OrderEntity orderEntity;
+        OrderEntity orderEntity = null;
 
         orderEntity = new OrderEntity();
         orderEntity.setConfirmationCode(orderDto.getConfirmationCode());

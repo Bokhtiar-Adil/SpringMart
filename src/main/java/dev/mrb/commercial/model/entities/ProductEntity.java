@@ -22,7 +22,6 @@ public class ProductEntity {
 
     private String name;
     private String productLineDesc;
-
     private Long stockNum;
     private String producer;
     private String description;
@@ -30,8 +29,8 @@ public class ProductEntity {
     @Column(name = "stock_quantity")
     private Long quantityInStock;
 
-    private Long buyPrice;
     private Long productionCost;
+    private Long buyPrice;
     private Long sellPrice;
     private Long mrp;
 
