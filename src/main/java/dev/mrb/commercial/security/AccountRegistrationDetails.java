@@ -22,13 +22,13 @@ public class AccountRegistrationDetails implements UserDetails {
     private List<GrantedAuthority> authorities;
 
     public AccountRegistrationDetails(AccountEntity account) {
-        this.username = account.getUsername();
-        this.password = account.getPassword();
-        this.isEnabled = account.isEnabled();
-        this.authorities = Arrays.stream(account.getRoles()
-                        .split(","))
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+//        this.username = account.getUsername();
+//        this.password = account.getPassword();
+//        this.isEnabled = account.isEnabled();
+//        this.authorities = Arrays.stream(account.getRoles()
+//                        .split(","))
+//                .map(SimpleGrantedAuthority::new)
+//                .collect(Collectors.toList());
     }
 
     @Override

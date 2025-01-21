@@ -31,15 +31,15 @@ public class AccountRegistrationSecurityConfig {
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/register/**").permitAll();
                     registry.requestMatchers("/accounts/**").hasRole("ADMIN");
-                    registry.requestMatchers("/employees").hasAnyAuthority("ADMIN","MODERATOR","EMPLOYEE");
-                    registry.requestMatchers("/customers/profile/edit/**").hasRole("CUSTOMER");
-                    registry.requestMatchers("/customers/profile/change-status/**").hasAnyAuthority("ADMIN","MODERATOR");
-                    registry.requestMatchers("/customers/search/**").hasAnyAuthority("ADMIN","MODERATOR");
+                    registry.requestMatchers("/employees").hasAnyAuthority("ADMIN","AUTHORITY","EMPLOYEE");
+                    registry.requestMatchers("/customers/profile/edit/**").hasAnyAuthority("CUSTOMER_SUPPORT","CUSTOMER");
+                    registry.requestMatchers("/customers/profile/change-status/**").hasAnyAuthority("ADMIN","AUTHORITY","CUSTOMER_SUPPORT");
+                    registry.requestMatchers("/customers/search/**").hasAnyAuthority("ADMIN","AUTHORITY","CUSTOMER_SUPPORT");
                     registry.requestMatchers("/employees/superior/**").hasRole("ADMIN");
-                    registry.requestMatchers("/employees/**").hasAnyAuthority("ADMIN","MODERATOR","EMPLOYEE");
-                    registry.requestMatchers("/orders/all").hasAnyAuthority("ADMIN","MODERATOR");
-                    registry.requestMatchers("/products/res/**").hasAnyAuthority("ADMIN","MODERATOR");
-                    registry.anyRequest().hasAnyAuthority("ADMIN","MODERATOR","EMPLOYEE","CUSTOMER");
+                    registry.requestMatchers("/employees/**").hasAnyAuthority("ADMIN","AUTHORITY","EMPLOYEE");
+                    registry.requestMatchers("/orders/all").hasAnyAuthority("ADMIN","AUTHORITY","CUSTOMER_SUPPORT");
+                    registry.requestMatchers("/products/res/**").hasAnyAuthority("ADMIN","CUSTOMER_SUPPORT", "AUTHORITY");
+                    registry.anyRequest().hasAnyAuthority("ADMIN","AUTHORITY","CUSTOMER_SUPPORT","EMPLOYEE","CUSTOMER");
                 })
                 .formLogin((needToWorkHere) -> {})
                 .build();
