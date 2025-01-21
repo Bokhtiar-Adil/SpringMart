@@ -4,6 +4,7 @@ import dev.mrb.commercial.model.entities.AccountEntity;
 import dev.mrb.commercial.model.entities.EmployeeEntity;
 import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -24,5 +25,9 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
 
     @Query("SELECT a.username FROM AccountEntity a WHERE employeeDetails = :employee")
     String getUsernameByEmployee(EmployeeEntity employee);
+
+    @Modifying
+    @Query("UPDATE OrderEntity o SET o.orderConfirmationToken = :token WHERE o.orderId = :orderId")
+    void saveVerificationTokenById(@Param("orderId") Long orderId, @Param("token") String token);
 
 }

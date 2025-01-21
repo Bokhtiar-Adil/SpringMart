@@ -1,5 +1,6 @@
 package dev.mrb.commercial.services.impl;
 
+import dev.mrb.commercial.events.OrderConfirmationEvent;
 import dev.mrb.commercial.mappers.Mapper;
 import dev.mrb.commercial.model.dtos.OrderDto;
 import dev.mrb.commercial.model.dtos.ProductDto;
@@ -10,6 +11,7 @@ import dev.mrb.commercial.repositories.*;
 import dev.mrb.commercial.services.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.query.Order;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,12 +29,12 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderDetailsRepository orderDetailsRepository;
-    private final VerificationTokenRepository verificationTokenRepository;
     private final EmployeeRepository employeeRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
     private final Mapper<OrderEntity, OrderDto> orderMapper;
     private final Mapper<ProductEntity, ProductDto> productMapper;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public String addOrderAndGetConfirmationCode(OrderDto orderDto) {
@@ -61,6 +63,7 @@ public class OrderServiceImpl implements OrderService {
             orderEntity.setPaymentMethod(orderDto.getPaymentMethod());
         orderEntity.setStatus(OrderStatus.PENDING);
         orderRepository.save(orderEntity);
+        applicationEventPublisher.publishEvent(new OrderConfirmationEvent(orderDto, "http://www.springmart.com/"));
 
         return confirmationCode;
     }
@@ -209,7 +212,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void saveOrderConfirmationToken(OrderEntity order, String token) {
-        VerificationTokenEntity newToken = new VerificationTokenEntity(token, order);
-        verificationTokenRepository.save(newToken);
+        orderRepository.saveOrderConfirmationTokenById(order.getOrderId(), token);
     }
+
 }

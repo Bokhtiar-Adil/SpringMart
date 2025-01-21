@@ -44,4 +44,6 @@ public class AccountEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
+
+    private String accountVerificationToken;
 }

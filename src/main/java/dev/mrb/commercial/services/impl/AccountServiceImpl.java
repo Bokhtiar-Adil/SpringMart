@@ -1,5 +1,7 @@
 package dev.mrb.commercial.services.impl;
 
+import dev.mrb.commercial.events.AccountVerificationEvent;
+import dev.mrb.commercial.events.OrderConfirmationEvent;
 import dev.mrb.commercial.model.dtos.AccountDto;
 import dev.mrb.commercial.model.entities.AccountEntity;
 import dev.mrb.commercial.model.entities.CustomerEntity;
@@ -14,6 +16,7 @@ import dev.mrb.commercial.repositories.EmployeeRepository;
 import dev.mrb.commercial.registration.token.VerificationTokenRepository;
 import dev.mrb.commercial.services.AccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,12 +34,10 @@ public class AccountServiceImpl implements AccountService {
     private final CustomerRepository customerRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher applicationEventPublisher;
     @Override
     public void saveAccountVerificationToken(AccountEntity account, String token) {
-        VerificationToken newToken;
-        
-        newToken = new VerificationToken(token, account);
-        verificationTokenRepository.save(newToken);
+        accountRepository.saveVerificationTokenById(account.getAccountId(), token);
     }
 
     @Override
@@ -54,8 +55,10 @@ public class AccountServiceImpl implements AccountService {
         newAccount.setEmail(employeeEntity.getEmail());
         newAccount.setEnabled(false);
         newAccount.setRoles(employee.roles());
+        newAccount = accountRepository.save(newAccount);
+        applicationEventPublisher.publishEvent(new AccountVerificationEvent(newAccount, "http://www.springmart.com/"));
 
-        return accountRepository.save(newAccount);
+        return newAccount;
     }
 
     @Override
@@ -74,7 +77,10 @@ public class AccountServiceImpl implements AccountService {
         newAccount.setEnabled(false);
         newAccount.setRoles(EnumSet.of(Role.CUSTOMER));
 
-        return accountRepository.save(newAccount);
+        newAccount = accountRepository.save(newAccount);
+        applicationEventPublisher.publishEvent(new AccountVerificationEvent(newAccount, "http://www.springmart.com/"));
+
+        return newAccount;
     }
 
     @Override

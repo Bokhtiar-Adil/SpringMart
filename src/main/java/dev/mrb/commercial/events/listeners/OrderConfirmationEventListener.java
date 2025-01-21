@@ -25,7 +25,7 @@ public class OrderConfirmationEventListener implements ApplicationListener<Order
     @Override
     public void onApplicationEvent(OrderConfirmationEvent event) {
         OrderEntity order = orderRepository.findById(event.getOrderDto().getOrderId()).get();
-        String customerEmail = customerRepository.findById(event.getOrderDto().getCustomer().getCustomerId()).get().getEmail();
+        String customerEmail = customerRepository.findById(event.getOrderDto().getCustomerId()).get().getEmail();
         String verificationToken = UUID.randomUUID().toString();
         orderService.saveOrderConfirmationToken(order, verificationToken);
         String url = event.getApplicationUrl() + "/orders/new-order/confirm?token=" + verificationToken;

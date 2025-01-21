@@ -53,4 +53,6 @@ public class OrderEntity {
 
     @Builder.Default
     private List<Long> quantities = new ArrayList<Long>();
+
+    private String orderConfirmationToken;
 }
